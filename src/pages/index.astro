@@ -8,8 +8,19 @@ const destacados = (await getCollection('software'))
 	.filter((entrada) => entrada.data.destacado)
 	.sort((a, b) => a.data.orden - b.data.orden);
 
-const investigacionReciente = (await getCollection('investigacion'))
-	.sort((a, b) => a.data.orden - b.data.orden)
+// Igual que en /investigacion/: se juntan las fichas escritas a mano y las
+// importadas de ORCID, dando prioridad a las primeras cuando comparten DOI.
+const manuales = await getCollection('investigacion');
+const importados = await getCollection('publicaciones');
+const doisManuales = new Set(
+	manuales.map((e) => e.data.doi?.toLowerCase()).filter(Boolean),
+);
+
+const investigacionReciente = [
+	...manuales,
+	...importados.filter((e) => !doisManuales.has(e.data.doi?.toLowerCase())),
+]
+	.sort((a, b) => a.data.orden - b.data.orden || b.data.anio - a.data.anio)
 	.slice(0, 3);
 ---
 

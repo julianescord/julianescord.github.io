@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 // Astro 7 depreco el reexport `z` de 'astro:content': zod se importa directo.
 import { z } from 'zod';
+import { orcidLoader } from './loaders/orcid';
 
 // Dos colecciones con esquemas distintos, a proposito. Un articulo revisado
 // por pares no tiene "stack" ni "demo", y un proyecto de software no tiene
@@ -27,9 +28,10 @@ const software = defineCollection({
 	}),
 });
 
-const investigacion = defineCollection({
-	loader: glob({ pattern: '**/*.md', base: './src/content/investigacion' }),
-	schema: z.object({
+// El esquema lo comparten la coleccion escrita a mano y la que se importa de
+// ORCID, para que ambas se puedan mostrar con el mismo componente.
+const esquemaInvestigacion = () =>
+	z.object({
 		titulo: z.string(),
 		resumen: z.string(),
 		tipo: z.enum(['articulo', 'capitulo', 'tesis', 'modelo', 'poster']),
@@ -43,7 +45,27 @@ const investigacion = defineCollection({
 		estado: z.enum(['publicado', 'en revision', 'en curso']),
 		etiquetas: z.array(z.string()).default([]),
 		orden: z.number().int().default(100),
-	}),
+		// Permite distinguir en la pagina lo escrito a mano de lo importado.
+		origen: z.enum(['manual', 'orcid']).default('manual'),
+	});
+
+// Trabajos escritos a mano: los que llevan texto propio (la tesis, modelos
+// computacionales) o que no estan registrados en ORCID.
+const investigacion = defineCollection({
+	loader: glob({ pattern: '**/*.md', base: './src/content/investigacion' }),
+	schema: esquemaInvestigacion(),
 });
 
-export const collections = { software, investigacion };
+// Publicaciones importadas de ORCID al construir. ORCID es la fuente de
+// verdad: anadir un trabajo alli lo hace aparecer aqui en el siguiente
+// despliegue, sin tocar el repositorio.
+const publicaciones = defineCollection({
+	loader: orcidLoader({
+		id: '0009-0004-2313-8173',
+		// Los trabajos con ficha propia se excluyen para no duplicarlos.
+		excluirDoi: [],
+	}),
+	schema: esquemaInvestigacion(),
+});
+
+export const collections = { software, investigacion, publicaciones };
