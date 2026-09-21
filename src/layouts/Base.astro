@@ -1,0 +1,71 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Cabecera from '../components/Cabecera.astro';
+import PieDePagina from '../components/PieDePagina.astro';
+
+interface Props {
+	titulo: string;
+	descripcion: string;
+}
+
+const { titulo, descripcion } = Astro.props;
+const urlCanonica = new URL(Astro.url.pathname, Astro.site);
+const tituloCompleto = titulo === 'inicio'
+	? 'Julián E. Ordoñez'
+	: `${titulo} · Julián E. Ordoñez`;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{tituloCompleto}</title>
+		<meta name="description" content={descripcion} />
+		<link rel="canonical" href={urlCanonica} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={tituloCompleto} />
+		<meta property="og:description" content={descripcion} />
+		<meta property="og:url" content={urlCanonica} />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+		{/* Se aplica el tema antes del primer pintado para que no haya un
+		    destello blanco al cargar en modo oscuro. */}
+		<script is:inline>
+			(() => {
+				try {
+					const guardado = localStorage.getItem('tema');
+					const oscuro = guardado
+						? guardado === 'oscuro'
+						: matchMedia('(prefers-color-scheme: dark)').matches;
+					document.documentElement.classList.toggle('dark', oscuro);
+				} catch {
+					/* Modo privado o almacenamiento bloqueado: se queda en claro. */
+				}
+			})();
+		</script>
+	</head>
+
+	<body
+		class="min-h-screen bg-white text-tinta-800 antialiased dark:bg-tinta-950 dark:text-tinta-200"
+	>
+		<a
+			href="#contenido"
+			class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-acento-500 focus:px-4 focus:py-2 focus:text-white"
+		>
+			Saltar al contenido
+		</a>
+
+		<Cabecera />
+
+		<main id="contenido" class="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
+			<slot />
+		</main>
+
+		<PieDePagina />
+	</body>
+</html>

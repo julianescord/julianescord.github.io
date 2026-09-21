@@ -1,0 +1,84 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entrada: CollectionEntry<'investigacion'>;
+}
+
+const { entrada } = Astro.props;
+const { titulo, resumen, tipo, rol, venue, anio, doi, url, estado, etiquetas } = entrada.data;
+
+const nombreTipo: Record<string, string> = {
+	articulo: 'Artículo',
+	capitulo: 'Capítulo de libro',
+	tesis: 'Tesis',
+	modelo: 'Modelo computacional',
+	poster: 'Póster',
+};
+
+// El DOI se muestra como enlace resoluble; si no hay, se usa la url suelta.
+const enlace = doi ? `https://doi.org/${doi}` : url;
+---
+
+<article
+	class="rounded-lg border border-tinta-200 p-5 transition-colors hover:border-acento-500/40 dark:border-tinta-800"
+>
+	<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+		<span class="text-xs font-medium tracking-wide text-acento-500 uppercase">
+			{nombreTipo[tipo]}
+		</span>
+		{
+			estado !== 'publicado' && (
+				<span class="rounded-full bg-amber-500/10 px-2 py-0.5 text-xs text-amber-600 ring-1 ring-amber-500/20 ring-inset dark:text-amber-400">
+					{estado}
+				</span>
+			)
+		}
+		<span class="ml-auto text-sm text-tinta-400">{anio}</span>
+	</div>
+
+	<h3 class="mt-1.5 text-lg leading-snug font-semibold text-tinta-900 dark:text-tinta-50">
+		<a href={`/investigacion/${entrada.id}/`} class="hover:text-acento-500">
+			{titulo}
+		</a>
+	</h3>
+
+	{
+		venue && (
+			<p class="mt-1 text-sm text-tinta-600 italic dark:text-tinta-400">{venue}</p>
+		)
+	}
+
+	<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-400">{rol}</p>
+
+	<p class="mt-2 text-sm leading-relaxed text-tinta-600 dark:text-tinta-400">
+		{resumen}
+	</p>
+
+	{
+		etiquetas.length > 0 && (
+			<ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Temas">
+				{etiquetas.map((etiqueta) => (
+					<li class="rounded bg-tinta-50 px-2 py-0.5 text-xs text-tinta-600 dark:bg-tinta-800 dark:text-tinta-400">
+						{etiqueta}
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	{
+		enlace && (
+			<div class="mt-4 text-sm">
+				<a
+					href={enlace}
+					rel="noopener"
+					target="_blank"
+					class="font-medium text-acento-500 hover:underline"
+				>
+					{doi ? `DOI: ${doi}` : 'Ver publicación →'}
+				</a>
+			</div>
+		)
+	}
+</article>

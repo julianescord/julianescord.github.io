@@ -1,0 +1,96 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = (async () => {
+	const proyectos = await getCollection('software');
+	return proyectos.map((entrada) => ({
+		params: { id: entrada.id },
+		props: { entrada },
+	}));
+}) satisfies GetStaticPaths;
+
+const { entrada } = Astro.props;
+const { titulo, resumen, stack, estado, anio, repo, demo, sitio, privado } = entrada.data;
+const { Content } = await render(entrada);
+---
+
+<Base titulo={titulo} descripcion={resumen}>
+	<a href="/software/" class="text-sm text-acento-500 hover:underline">
+		← Software
+	</a>
+
+	<header class="mt-4 border-b border-tinta-200 pb-6 dark:border-tinta-800">
+		<h1 class="text-3xl font-bold tracking-tight text-tinta-900 dark:text-tinta-50">
+			{titulo}
+		</h1>
+
+		<p class="mt-2 text-lg text-tinta-600 dark:text-tinta-400">{resumen}</p>
+
+		<dl class="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+			<div>
+				<dt class="text-tinta-400">Estado</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{estado}</dd>
+			</div>
+			<div>
+				<dt class="text-tinta-400">Año</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{anio}</dd>
+			</div>
+			<div>
+				<dt class="text-tinta-400">Tecnologías</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{stack.join(' · ')}</dd>
+			</div>
+		</dl>
+
+		<div class="mt-5 flex flex-wrap gap-3">
+			{
+				demo && (
+					<a
+						href={demo}
+						class="rounded-md bg-acento-500 px-4 py-2 text-sm font-medium text-white hover:bg-acento-500/90"
+					>
+						Probar demo
+					</a>
+				)
+			}
+			{
+				sitio && (
+					<a
+						href={sitio}
+						rel="noopener"
+						target="_blank"
+						class="rounded-md bg-acento-500 px-4 py-2 text-sm font-medium text-white hover:bg-acento-500/90"
+					>
+						Ver sitio
+					</a>
+				)
+			}
+			{
+				repo && (
+					<a
+						href={repo}
+						rel="noopener"
+						target="_blank"
+						class="rounded-md border border-tinta-200 px-4 py-2 text-sm font-medium text-tinta-900 hover:border-acento-500/40 dark:border-tinta-800 dark:text-tinta-200"
+					>
+						Ver código
+					</a>
+				)
+			}
+			{
+				privado && !repo && (
+					<span class="rounded-md border border-tinta-200 px-4 py-2 text-sm text-tinta-400 dark:border-tinta-800">
+						Código privado
+					</span>
+				)
+			}
+		</div>
+	</header>
+
+	<div
+		class="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-acento-500"
+	>
+		<Content />
+	</div>
+</Base>

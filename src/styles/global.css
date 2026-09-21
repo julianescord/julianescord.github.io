@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+
+/* Da formato al cuerpo en Markdown de cada ficha (parrafos, encabezados,
+   listas, bloques de codigo). Sin esto las clases `prose` no generan nada. */
+@plugin '@tailwindcss/typography';
+
+/* El tema oscuro se activa con la clase .dark en <html>, no solo con la
+   preferencia del sistema, para que el interruptor de la cabecera pueda
+   anularla. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+	--color-tinta-50: #f6f7f9;
+	--color-tinta-200: #e2e6ec;
+	--color-tinta-400: #9aa4b2;
+	--color-tinta-600: #4b5563;
+	--color-tinta-800: #1f2937;
+	--color-tinta-900: #111827;
+	--color-tinta-950: #0b0f17;
+
+	--color-acento-500: #0d9488;
+	--color-acento-400: #2dd4bf;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+/* Evita el parpadeo claro->oscuro al cargar: el script en el <head> aplica la
+   clase antes de pintar, y este fondo acompana desde el primer frame. */
+html.dark {
+	background-color: var(--color-tinta-950);
+	color-scheme: dark;
+}

@@ -1,0 +1,87 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	entrada: CollectionEntry<'software'>;
+}
+
+const { entrada } = Astro.props;
+const { titulo, resumen, stack, estado, anio, repo, demo, sitio, privado } = entrada.data;
+
+const colorEstado: Record<string, string> = {
+	activo: 'bg-acento-500/10 text-acento-500 ring-acento-500/20',
+	estable: 'bg-tinta-50 text-tinta-600 ring-tinta-200 dark:bg-tinta-800 dark:text-tinta-400 dark:ring-tinta-600',
+	pausado: 'bg-amber-500/10 text-amber-600 ring-amber-500/20 dark:text-amber-400',
+	archivado: 'bg-tinta-50 text-tinta-400 ring-tinta-200 dark:bg-tinta-900 dark:ring-tinta-800',
+};
+---
+
+<article
+	class="rounded-lg border border-tinta-200 p-5 transition-colors hover:border-acento-500/40 dark:border-tinta-800"
+>
+	<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+		<h3 class="text-lg font-semibold text-tinta-900 dark:text-tinta-50">
+			<a href={`/software/${entrada.id}/`} class="hover:text-acento-500">
+				{titulo}
+			</a>
+		</h3>
+
+		<span
+			class:list={['rounded-full px-2 py-0.5 text-xs ring-1 ring-inset', colorEstado[estado]]}
+		>
+			{estado}
+		</span>
+
+		<span class="ml-auto text-sm text-tinta-400">{anio}</span>
+	</div>
+
+	<p class="mt-2 text-sm leading-relaxed text-tinta-600 dark:text-tinta-400">
+		{resumen}
+	</p>
+
+	<ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Tecnologías">
+		{
+			stack.map((tecnologia) => (
+				<li class="rounded bg-tinta-50 px-2 py-0.5 text-xs text-tinta-600 dark:bg-tinta-800 dark:text-tinta-400">
+					{tecnologia}
+				</li>
+			))
+		}
+	</ul>
+
+	<div class="mt-4 flex flex-wrap items-center gap-4 text-sm">
+		{
+			demo && (
+				<a href={demo} class="font-medium text-acento-500 hover:underline">
+					Probar demo →
+				</a>
+			)
+		}
+		{
+			sitio && (
+				<a href={sitio} rel="noopener" target="_blank" class="font-medium text-acento-500 hover:underline">
+					Ver sitio →
+				</a>
+			)
+		}
+		{
+			repo && (
+				<a
+					href={repo}
+					rel="noopener"
+					target="_blank"
+					class="text-tinta-600 hover:text-acento-500 dark:text-tinta-400"
+				>
+					Código
+				</a>
+			)
+		}
+		{/* Se dice explicitamente que es privado en vez de omitir el enlace sin
+		    explicacion, que se leeria como un proyecto sin codigo. */}
+		{
+			privado && !repo && (
+				<span class="text-tinta-400">Código privado</span>
+			)
+		}
+	</div>
+</article>
