@@ -1,0 +1,97 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = (async () => {
+	const trabajos = await getCollection('investigacion');
+	return trabajos.map((entrada) => ({
+		params: { id: entrada.id },
+		props: { entrada },
+	}));
+}) satisfies GetStaticPaths;
+
+const { entrada } = Astro.props;
+const { titulo, resumen, tipo, rol, venue, anio, doi, url, estado, etiquetas } = entrada.data;
+const { Content } = await render(entrada);
+
+const nombreTipo: Record<string, string> = {
+	articulo: 'Artículo',
+	capitulo: 'Capítulo de libro',
+	tesis: 'Tesis',
+	modelo: 'Modelo computacional',
+	poster: 'Póster',
+};
+
+const enlace = doi ? `https://doi.org/${doi}` : url;
+---
+
+<Base titulo={titulo} descripcion={resumen}>
+	<a href="/investigacion/" class="text-sm text-acento-500 hover:underline">
+		← Investigación
+	</a>
+
+	<header class="mt-4 border-b border-tinta-200 pb-6 dark:border-tinta-800">
+		<span class="text-xs font-medium tracking-wide text-acento-500 uppercase">
+			{nombreTipo[tipo]}
+		</span>
+
+		<h1 class="mt-1.5 text-3xl leading-tight font-bold tracking-tight text-tinta-900 dark:text-tinta-50">
+			{titulo}
+		</h1>
+
+		{
+			venue && (
+				<p class="mt-2 text-lg text-tinta-600 italic dark:text-tinta-400">{venue}</p>
+			)
+		}
+
+		<dl class="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+			<div>
+				<dt class="text-tinta-400">Rol</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{rol}</dd>
+			</div>
+			<div>
+				<dt class="text-tinta-400">Año</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{anio}</dd>
+			</div>
+			<div>
+				<dt class="text-tinta-400">Estado</dt>
+				<dd class="mt-0.5 text-tinta-900 dark:text-tinta-200">{estado}</dd>
+			</div>
+		</dl>
+
+		{
+			enlace && (
+				<div class="mt-5">
+					<a
+						href={enlace}
+						rel="noopener"
+						target="_blank"
+						class="rounded-md bg-acento-500 px-4 py-2 text-sm font-medium text-white hover:bg-acento-500/90"
+					>
+						{doi ? `DOI: ${doi}` : 'Ver publicación'}
+					</a>
+				</div>
+			)
+		}
+
+		{
+			etiquetas.length > 0 && (
+				<ul class="mt-5 flex flex-wrap gap-1.5" aria-label="Temas">
+					{etiquetas.map((etiqueta) => (
+						<li class="rounded bg-tinta-50 px-2 py-0.5 text-xs text-tinta-600 dark:bg-tinta-800 dark:text-tinta-400">
+							{etiqueta}
+						</li>
+					))}
+				</ul>
+			)
+		}
+	</header>
+
+	<div
+		class="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-acento-500"
+	>
+		<Content />
+	</div>
+</Base>

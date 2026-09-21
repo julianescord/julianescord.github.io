@@ -1,0 +1,94 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TarjetaSoftware from '../components/TarjetaSoftware.astro';
+import TarjetaInvestigacion from '../components/TarjetaInvestigacion.astro';
+
+const destacados = (await getCollection('software'))
+	.filter((entrada) => entrada.data.destacado)
+	.sort((a, b) => a.data.orden - b.data.orden);
+
+const investigacionReciente = (await getCollection('investigacion'))
+	.sort((a, b) => a.data.orden - b.data.orden)
+	.slice(0, 3);
+---
+
+<Base
+	titulo="inicio"
+	descripcion="Julián E. Ordoñez — Ingeniero biomédico. Nanotecnología, machine learning aplicado a biociencias e ingeniería de software."
+>
+	<section>
+		<h1 class="text-3xl font-bold tracking-tight text-tinta-900 sm:text-4xl dark:text-tinta-50">
+			Julián E. Ordoñez
+		</h1>
+
+		<p class="mt-3 text-lg text-tinta-600 dark:text-tinta-400">
+			Ingeniero biomédico · Nanotecnología · Machine learning aplicado
+		</p>
+
+		<div class="mt-6 space-y-4 leading-relaxed text-tinta-600 dark:text-tinta-400">
+			<p>
+				Trabajo en la intersección entre <strong class="font-medium text-tinta-900 dark:text-tinta-200"
+					>nanotecnología, aprendizaje automático y biociencias</strong
+				>. Mi investigación de pregrado aborda nanopartículas de síntesis verde
+				para textiles antimicrobianos, y co-lidero el Departamento de
+				Nanotecnología en <a
+					href="https://phagentech.com/"
+					rel="noopener"
+					target="_blank"
+					class="text-acento-500 hover:underline">Phagen Tech</a
+				>.
+			</p>
+			<p>
+				Esta página reúne dos tipos de trabajo que suelo mantener separados:
+				el <a href="/software/" class="text-acento-500 hover:underline">software</a
+				> que construyo y la <a
+					href="/investigacion/"
+					class="text-acento-500 hover:underline">investigación</a
+				> que publico.
+			</p>
+		</div>
+	</section>
+
+	{
+		destacados.length > 0 && (
+			<section class="mt-14">
+				<div class="flex items-baseline justify-between">
+					<h2 class="text-xl font-semibold text-tinta-900 dark:text-tinta-50">
+						Proyectos destacados
+					</h2>
+					<a href="/software/" class="text-sm text-acento-500 hover:underline">
+						Ver todos →
+					</a>
+				</div>
+
+				<div class="mt-5 grid gap-4">
+					{destacados.map((entrada) => (
+						<TarjetaSoftware entrada={entrada} />
+					))}
+				</div>
+			</section>
+		)
+	}
+
+	{
+		investigacionReciente.length > 0 && (
+			<section class="mt-14">
+				<div class="flex items-baseline justify-between">
+					<h2 class="text-xl font-semibold text-tinta-900 dark:text-tinta-50">
+						Investigación
+					</h2>
+					<a href="/investigacion/" class="text-sm text-acento-500 hover:underline">
+						Ver toda →
+					</a>
+				</div>
+
+				<div class="mt-5 grid gap-4">
+					{investigacionReciente.map((entrada) => (
+						<TarjetaInvestigacion entrada={entrada} />
+					))}
+				</div>
+			</section>
+		)
+	}
+</Base>
