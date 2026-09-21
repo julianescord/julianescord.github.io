@@ -2,11 +2,12 @@
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-	entrada: CollectionEntry<'investigacion'>;
+	entrada: CollectionEntry<'investigacion'> | CollectionEntry<'publicaciones'>;
 }
 
 const { entrada } = Astro.props;
-const { titulo, resumen, tipo, rol, venue, anio, doi, url, estado, etiquetas } = entrada.data;
+const { titulo, resumen, tipo, rol, venue, anio, doi, url, estado, etiquetas, origen } =
+	entrada.data;
 
 const nombreTipo: Record<string, string> = {
 	articulo: 'Artículo',
@@ -18,6 +19,11 @@ const nombreTipo: Record<string, string> = {
 
 // El DOI se muestra como enlace resoluble; si no hay, se usa la url suelta.
 const enlace = doi ? `https://doi.org/${doi}` : url;
+
+// Los trabajos importados de ORCID no tienen cuerpo propio, asi que el titulo
+// lleva directo a la publicacion en vez de a una pagina de detalle vacia.
+const destinoTitulo = origen === 'orcid' ? enlace : `/investigacion/${entrada.id}/`;
+const esExterno = origen === 'orcid';
 ---
 
 <article
@@ -38,9 +44,20 @@ const enlace = doi ? `https://doi.org/${doi}` : url;
 	</div>
 
 	<h3 class="mt-1.5 text-lg leading-snug font-semibold text-tinta-900 dark:text-tinta-50">
-		<a href={`/investigacion/${entrada.id}/`} class="hover:text-acento-500">
-			{titulo}
-		</a>
+		{
+			destinoTitulo ? (
+				<a
+					href={destinoTitulo}
+					class="hover:text-acento-500"
+					rel={esExterno ? 'noopener' : undefined}
+					target={esExterno ? '_blank' : undefined}
+				>
+					{titulo}
+				</a>
+			) : (
+				titulo
+			)
+		}
 	</h3>
 
 	{
@@ -51,7 +68,16 @@ const enlace = doi ? `https://doi.org/${doi}` : url;
 
 	<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-400">{rol}</p>
 
-	<p class="mt-2 text-sm leading-relaxed text-tinta-600 dark:text-tinta-400">
+	{/* En lo importado de ORCID el resumen es la lista de autores, que se
+	    muestra mas discreta que una descripcion escrita a mano. */}
+	<p
+		class:list={[
+			'mt-2 text-sm leading-relaxed',
+			origen === 'orcid'
+				? 'text-tinta-400'
+				: 'text-tinta-600 dark:text-tinta-400',
+		]}
+	>
 		{resumen}
 	</p>
 
