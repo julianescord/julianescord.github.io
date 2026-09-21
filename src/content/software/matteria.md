@@ -1,33 +1,41 @@
 ---
 titulo: MatterIA
-resumen: Plataforma de automatización autoalojada que fundé, construida sobre n8n, Docker y el protocolo MCP para orquestar flujos de trabajo agénticos.
+resumen: Hub científico que fundé, con IA como copiloto, GPUs propias y campus de formación. Infraestructura autoalojada en producción, con tres servicios en línea.
 privado: true
-stack: [TypeScript, Docker, n8n, MCP, Shell]
+sitio: https://matter-ia.dev
+stack: [TypeScript, Docker, NodeBB, Moodle, n8n, MCP]
 estado: activo
 anio: 2026
 destacado: true
 orden: 2
 ---
 
-<!-- TODO: revisar y ampliar. Escrito a partir de tu README de perfil y de la
-     estructura de los repos; corrige lo que no corresponda y anade lo que
-     puedas contar publicamente. -->
+MatterIA es un hub científico que fundé, construido sobre infraestructura
+autoalojada en lugar de servicios de terceros. Está en producción, con tres
+servicios públicos en línea.
 
-MatterIA es una plataforma de automatización autoalojada que fundé, orientada
-a orquestar flujos de trabajo agénticos sobre infraestructura propia en lugar
-de servicios de terceros.
+## Servicios
 
-## Componentes
+- **[matter-ia.dev](https://matter-ia.dev)** — la landing pública del
+  proyecto, multilingüe.
+- **[hub.matter-ia.dev](https://hub.matter-ia.dev)** — el hub de la comunidad,
+  construido sobre NodeBB con una capa de personalización propia.
+- **[campus.matter-ia.dev](https://campus.matter-ia.dev)** — el campus de
+  formación, sobre Moodle.
 
-- **Infraestructura** — despliegue autoalojado con Docker, túneles y copias de
-  seguridad automatizadas.
-- **Hub** — interfaz de gestión en TypeScript.
-- **Landing** — sitio público del proyecto.
-- **Servidores MCP** — integraciones a medida (n8n, Notion) que exponen
-  herramientas al modelo mediante el Model Context Protocol.
+## Infraestructura
 
-## TODO
+El despliegue completo es autoalojado: contenedores Docker, túneles para
+exponer los servicios, copias de seguridad automatizadas y flujos de trabajo
+agénticos orquestados con n8n y servidores MCP a medida.
 
-- Capturas de pantalla de la interfaz
-- Métricas o resultados concretos (flujos automatizados, tiempo ahorrado)
-- Decidir qué es publicable y qué no
+Elegir infraestructura propia sobre SaaS fue deliberado: mantiene los datos de
+investigación bajo control y permite ejecutar cargas de GPU propias sin
+depender de la tarifa de un tercero.
+
+El código vive en la organización [matter-ia](https://github.com/matter-ia) y
+es privado.
+
+<!-- TODO: si quieres reforzar esta ficha, lo que mas sumaria son capturas del
+     hub y del campus, y una cifra concreta (usuarios, cursos publicados o
+     flujos automatizados). El resto ya esta verificado y en linea. -->
