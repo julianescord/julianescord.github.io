@@ -2,6 +2,7 @@
 titulo: Cheminator
 resumen: Librería C++ de nomenclatura química inorgánica en español, que explica su razonamiento paso a paso y corre en el navegador vía WebAssembly.
 repo: https://github.com/julianescord/cheminator
+demo: https://julianescord.github.io/cheminator/
 stack: [C++20, CMake, WebAssembly, Emscripten]
 estado: activo
 anio: 2026
