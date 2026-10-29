@@ -1,11 +1,11 @@
 ---
-titulo: Green Synthesis and Impregnation of Bimetallic Silver Nanoparticles (Ag-M BNPs) in Cotton Fabrics with Antibacterial Activity
-resumen: Síntesis verde de nanopartículas bimetálicas de plata (Ag-Cu, Ag-MgO, Ag-ZnO) con extracto de Aloe vera, e impregnación en fibras de algodón para obtener textiles con actividad antibacteriana.
+titulo: Green Synthesis and Impregnation of Bimetallic Silver Nanoparticles (Ag-Cu, Ag-Mg, Ag-Zn) in Cotton Fabrics with Antibacterial Activity
+resumen: Síntesis verde de nanopartículas bimetálicas de plata (Ag-Cu, Ag-Mg, Ag-Zn) con extracto de Aloe vera, e impregnación en fibras de algodón para obtener textiles con actividad antibacteriana.
 tipo: tesis
 rol: Coautor, junto con Kevin G. Molina Vaca
 venue: Universidad de Investigación de Tecnología Experimental Yachay — Escuela de Ciencias Biológicas e Ingeniería
 anio: 2026
-estado: en curso
+estado: completado
 etiquetas:
   [
     nanotecnología,
@@ -27,7 +27,7 @@ hospitalarios como batas, ropa de cama y cortinas.
 ## Síntesis
 
 Se emplea extracto de *Aloe vera* como agente reductor en la síntesis verde
-de tres sistemas de nanocompuestos: **Ag-Cu, Ag-MgO y Ag-ZnO**.
+de tres sistemas de nanocompuestos: **Ag-Cu, Ag-Mg y Ag-Zn**.
 
 ## Caracterización
 

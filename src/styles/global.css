@@ -9,19 +9,36 @@
    anularla. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Paleta verde-gris de marca (knowledge/marca-personal-plan.md, sec. 3).
+   Los tonos intermedios (tinta-200, -600, -900, -950) se derivan de los
+   cuatro colores de la paleta para completar la escala; no son del plan. */
 @theme {
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Newsreader Variable', Georgia, serif;
 
-	--color-tinta-50: #f6f7f9;
-	--color-tinta-200: #e2e6ec;
-	--color-tinta-400: #9aa4b2;
-	--color-tinta-600: #4b5563;
-	--color-tinta-800: #1f2937;
-	--color-tinta-900: #111827;
-	--color-tinta-950: #0b0f17;
+	--color-bosque: #245747;
+	--color-salvia: #a7b9a8;
+	--color-grafito: #303a38;
+	--color-piedra: #737d79;
+	--color-papel: #f7f8f5;
+	--color-blanco: #ffffff;
 
-	--color-acento-500: #0d9488;
-	--color-acento-400: #2dd4bf;
+	--color-tinta-50: #f7f8f5;
+	--color-tinta-200: #dde3dc;
+	--color-tinta-300: #b9c3be;
+	--color-tinta-400: #737d79;
+	--color-tinta-600: #4d5854;
+	--color-tinta-800: #303a38;
+	--color-tinta-900: #232b29;
+	--color-tinta-950: #161c1a;
+
+	--color-acento-500: #245747;
+	--color-acento-400: #a7b9a8;
+
+	/* Tonos de acento para destacar temas en el texto, derivados de la paleta. */
+	--color-menta: #8fc2a8;
+	--color-arena: #d9c9a3;
+	--color-ocre: #7a6330;
 }
 
 html {
@@ -33,4 +50,26 @@ html {
 html.dark {
 	background-color: var(--color-tinta-950);
 	color-scheme: dark;
+}
+
+.titulo-display {
+	font-family: var(--font-display);
+	font-style: normal;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+}
+
+/* Titulos en la fuente display y texto corrido en Inter, en todo el sitio. */
+h1,
+h2,
+h3 {
+	font-family: var(--font-display);
+	font-style: normal;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+}
+
+/* Las secciones de la pagina principal se desplazan bajo la cabecera fija. */
+section[id] {
+	scroll-margin-top: 5.5rem;
 }

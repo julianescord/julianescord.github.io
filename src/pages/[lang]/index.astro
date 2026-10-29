@@ -1,0 +1,338 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TarjetaSoftware from '../../components/TarjetaSoftware.astro';
+import TarjetaInvestigacion from '../../components/TarjetaInvestigacion.astro';
+import { correo, idiomas, redes, t, whatsapp, type Idioma } from '../../i18n/ui';
+
+export const getStaticPaths = () => idiomas.map((lang) => ({ params: { lang } }));
+
+const lang = Astro.params.lang as Idioma;
+const textos = t(lang);
+const esEs = lang === 'es';
+
+const manuales = await getCollection('investigacion', (e) => e.id.startsWith(`${lang}/`));
+const importados = await getCollection('publicaciones');
+const doisManuales = new Set(manuales.map((e) => e.data.doi?.toLowerCase()).filter(Boolean));
+const investigacion = [
+	...manuales,
+	...importados.filter((e) => !doisManuales.has(e.data.doi?.toLowerCase())),
+].sort((a, b) => a.data.orden - b.data.orden || b.data.anio - a.data.anio);
+
+const software = (await getCollection('software', (e) => e.id.startsWith(`${lang}/`))).sort(
+	(a, b) => a.data.orden - b.data.orden || b.data.anio - a.data.anio,
+);
+
+const redesPrincipales = redes.filter((r) =>
+	['GitHub', 'LinkedIn', 'ORCID', 'YouTube', 'Instagram', 'Facebook'].includes(r.nombre),
+);
+
+const habilidades = [
+	{
+		grupo: textos.habilidades.grupos.lenguajes,
+		color: 'text-acento-500 dark:text-menta',
+		chips: [
+			{ texto: 'C++20', href: `/${lang}/software/cheminator/` },
+			{ texto: 'Python', href: `/${lang}/software/yakuponia-biosensors/` },
+			{ texto: 'R', href: `/${lang}/software/breast-cancer-tda-pam50/` },
+		],
+	},
+	{
+		grupo: textos.habilidades.grupos.simulacion,
+		color: 'text-ocre dark:text-arena',
+		chips: [
+			{ texto: 'COMSOL Multiphysics · FEM', href: `/${lang}/investigacion/comsol-phage-rhizosphere/` },
+			{ texto: esEs ? 'Modelado cinético' : 'Kinetic modeling', href: `/${lang}/software/yakuponia-biosensors/` },
+		],
+	},
+	{
+		grupo: textos.habilidades.grupos.datos,
+		color: 'text-acento-500 dark:text-menta',
+		chips: [
+			{ texto: esEs ? 'SVM y validación cruzada' : 'SVM and cross-validation', href: `/${lang}/software/breast-cancer-tda-pam50/` },
+			{ texto: 'Mapper (TDA)', href: `/${lang}/software/breast-cancer-tda-pam50/` },
+			{ texto: esEs ? 'Análisis de supervivencia' : 'Survival analysis', href: `/${lang}/software/breast-cancer-tda-pam50/` },
+		],
+	},
+	{
+		grupo: textos.habilidades.grupos.laboratorio,
+		color: 'text-ocre dark:text-arena',
+		chips: [
+			{ texto: esEs ? 'Síntesis verde de nanopartículas' : 'Green nanoparticle synthesis', href: `/${lang}/investigacion/tesis-nanoparticulas/` },
+			{ texto: 'UV-Vis · XRD · FTIR · Raman · TGA · SEM-EDX', href: `/${lang}/investigacion/tesis-nanoparticulas/` },
+			{ texto: esEs ? 'Ensayos antimicrobianos (CMI, difusión en disco)' : 'Antimicrobial assays (MIC, disk diffusion)', href: `/${lang}/investigacion/tesis-nanoparticulas/` },
+		],
+	},
+];
+
+const experiencia = [
+	{
+		fecha: 'Feb 2025 – Jul 2026',
+		rol: esEs ? 'Co-fundador y Director del Departamento de Nanotecnología' : 'Co-founder and Director of the Nanotechnology Department',
+		organizacion: 'Phagen Tech · Urcuquí, Ecuador',
+		descripcion: esEs
+			? 'Dirigí la agenda de I+D del departamento y el equipo de 4 científicos. Coordiné la preparación de resultados de 7 miembros del equipo para dos conferencias internacionales.'
+			: 'Led the department’s R&D agenda and its team of 4 scientists. Coordinated the preparation of results from 7 team members for two international conferences.',
+	},
+	{
+		fecha: 'May 2024 – Jul 2026',
+		rol: esEs ? 'Investigador Asociado en Sistemas de Liberación' : 'Research Associate in Delivery Systems',
+		organizacion: 'Phagen Tech · Urcuquí, Ecuador',
+		descripcion: esEs
+			? 'Sinteticé microesferas de alginato y quitosano, realicé más de 100 curvas de liberación en PBS a distintos pH y modelé la difusión con COMSOL Multiphysics (FEM).'
+			: 'Synthesized alginate and chitosan microbeads, ran more than 100 release curves in PBS at different pH values, and modeled diffusion with COMSOL Multiphysics (FEM).',
+	},
+	{
+		fecha: 'Sep 2025 – Dic 2025',
+		rol: esEs ? 'Instructor Principal, Extracción y Producción de Extractos Naturales' : 'Lead Instructor, Natural Extract Extraction and Production',
+		organizacion: esEs ? 'Laboratorio de Microbiología (FICAYA), IEEE EMBS UTN · Ibarra, Ecuador' : 'Microbiology Laboratory (FICAYA), IEEE EMBS UTN · Ibarra, Ecuador',
+		descripcion: esEs
+			? 'Di soporte técnico directo a más de 15 estudiantes en extracción, filtración, nanoencapsulación y ensayos de bioactividad. Diseñé los experimentos con diseño de experimentos (DoE).'
+			: 'Gave direct technical support to more than 15 students in extraction, filtration, nanoencapsulation and bioactivity assays. Designed the experiments using design of experiments (DoE).',
+	},
+];
+
+const formacion = {
+	fecha: 'Abr 2021 – Sep 2026',
+	titulo: esEs ? 'Ingeniería Biomédica' : 'Biomedical Engineering',
+	institucion: 'Universidad de Investigación de Tecnología Experimental Yachay',
+	descripcion: esEs
+		? 'Promedio 8.7/10. Tesis: síntesis verde de nanocompuestos de plata para textiles antimicrobianos.'
+		: 'GPA 8.7/10. Thesis: green synthesis of silver nanocomposites for antimicrobial textiles.',
+};
+
+const reconocimientos = [
+	{
+		titulo: 'Hult Prize · 9.ª edición',
+		entidad: esEs
+			? 'Winner, OnCampus Yachay Tech (feb 2025); First Runner Up, competencia nacional (abr 2025)'
+			: 'Winner, OnCampus Yachay Tech (Feb 2025); First Runner Up, national competition (Apr 2025)',
+	},
+	{
+		titulo: 'Falling Walls Lab Ecuador',
+		entidad: esEs
+			? 'Participante seleccionado, tema: Breaking the Wall of Phage Therapy (jun 2025)'
+			: 'Selected participant, topic: Breaking the Wall of Phage Therapy (Jun 2025)',
+	},
+	{
+		titulo: 'GBR Andes Future Biotech Programme',
+		entidad: esEs
+			? 'Participante seleccionado, Global Biotech Revolution y BiohackUIO (oct 2026)'
+			: 'Selected participant, Global Biotech Revolution and BiohackUIO (Oct 2026)',
+	},
+	{
+		titulo: esEs ? 'Beca de excelencia académica' : 'Academic excellence scholarship',
+		entidad: esEs
+			? 'Universidad Yachay Tech, GPA 9.3 (nov 2022 – mar 2023)'
+			: 'Yachay Tech University, GPA 9.3 (Nov 2022 – Mar 2023)',
+	},
+];
+
+const bloqueTitulo = 'text-4xl font-medium tracking-tight text-tinta-900 sm:text-5xl dark:text-tinta-50';
+const bloqueTexto = 'mt-4 max-w-3xl text-lg leading-relaxed text-tinta-600 dark:text-tinta-300';
+const seccion = 'mt-24 scroll-mt-24';
+---
+
+<Base titulo="inicio" descripcion={textos.hero.descripcion} idioma={lang}>
+	<section id="inicio" class="grid items-start gap-12 lg:grid-cols-[minmax(0,320px)_1fr] lg:gap-16">
+		<aside class="space-y-6">
+			<img
+				src="/foto-julian.jpg"
+				alt={textos.nombre}
+				width="900"
+				height="1200"
+				class="aspect-[4/5] w-full rounded-2xl object-cover"
+			/>
+			<ul class="space-y-2 text-sm text-tinta-600 dark:text-tinta-300">
+				<li>{textos.hero.universidad}</li>
+				<li>{textos.hero.empresa}</li>
+				<li>{textos.hero.ubicacion}</li>
+			</ul>
+		</aside>
+
+		<div>
+			<h1 class="text-6xl leading-none font-medium tracking-tight text-tinta-900 sm:text-7xl lg:text-8xl dark:text-tinta-50">
+				{textos.nombre}
+			</h1>
+
+			<p class="mt-6 text-2xl text-tinta-900 dark:text-tinta-100">{textos.hero.enfoqueA}</p>
+			<p class="mt-1 text-2xl text-acento-500 dark:text-menta">{textos.hero.enfoqueB}</p>
+			<p class="mt-1 text-2xl text-ocre dark:text-arena">{textos.hero.enfoqueC}</p>
+
+			<p class="mt-8 max-w-2xl text-lg leading-relaxed text-tinta-600 dark:text-tinta-300">{textos.hero.descripcion}</p>
+
+			<div class="mt-8 flex flex-wrap gap-3">
+				<a href={`/${lang}/#contacto`} class="rounded-full bg-menta px-6 py-3 text-sm font-medium text-tinta-950 hover:opacity-90">
+					{textos.hero.contacto} →
+				</a>
+				<a href={`/${lang}/#proyectos`} class="rounded-full border border-tinta-200 px-6 py-3 text-sm font-medium text-tinta-900 hover:border-menta dark:border-tinta-800 dark:text-tinta-50">
+					{textos.nav.proyectos}
+				</a>
+			</div>
+
+			<ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+				{
+					redesPrincipales.map((red) => (
+						<li>
+							<a href={red.url} rel="me noopener" target="_blank" class="text-tinta-600 hover:text-acento-500 dark:text-tinta-300 dark:hover:text-menta">
+								{red.nombre} ↗
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<section class="mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-tinta-200 bg-tinta-200 md:grid-cols-4 dark:border-tinta-800 dark:bg-tinta-800">
+		<div class="bg-papel p-6 dark:bg-tinta-950">
+			<p class="text-4xl font-medium text-acento-500 dark:text-menta">{importados.length}</p>
+			<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-300">{textos.credenciales.publicaciones}</p>
+		</div>
+		<div class="bg-papel p-6 dark:bg-tinta-950">
+			<p class="text-2xl font-medium text-tinta-900 dark:text-tinta-50">Hult Prize</p>
+			<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-300">{textos.credenciales.hult}</p>
+		</div>
+		<div class="bg-papel p-6 dark:bg-tinta-950">
+			<p class="text-2xl font-medium text-tinta-900 dark:text-tinta-50">Falling Walls Lab</p>
+			<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-300">{textos.credenciales.falling}</p>
+		</div>
+		<div class="bg-papel p-6 dark:bg-tinta-950">
+			<p class="text-2xl font-medium text-ocre dark:text-arena">Yachay Tech</p>
+			<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-300">{textos.credenciales.ingenieria}</p>
+		</div>
+	</section>
+
+	<section id="proyectos" class={seccion}>
+		<h2 class={bloqueTitulo}>{textos.nav.proyectos}</h2>
+		<p class={bloqueTexto}>{textos.proyectos.descripcion}</p>
+
+		<div class="mt-14">
+			<h3 class="text-3xl text-tinta-900 dark:text-tinta-50">{textos.investigacion.titulo}</h3>
+			<p class="mt-2 text-tinta-600 dark:text-tinta-300">{textos.investigacion.descripcion}</p>
+			<div class="mt-8 grid gap-6 md:grid-cols-2">
+				{investigacion.map((entrada) => <TarjetaInvestigacion entrada={entrada} idioma={lang} />)}
+			</div>
+		</div>
+
+		<div class="mt-20">
+			<h3 class="text-3xl text-tinta-900 dark:text-tinta-50">{textos.nav.software}</h3>
+			<div class="mt-8 grid gap-6 md:grid-cols-2">
+				{software.map((entrada) => <TarjetaSoftware entrada={entrada} idioma={lang} />)}
+			</div>
+		</div>
+	</section>
+
+	<section id="habilidades" class={seccion}>
+		<h2 class={bloqueTitulo}>{textos.habilidades.titulo}</h2>
+		<p class={bloqueTexto}>{textos.habilidades.texto}</p>
+
+		<div class="mt-10 grid gap-6 md:grid-cols-2">
+			{
+				habilidades.map((grupo) => (
+					<div class="rounded-2xl border border-tinta-200 p-6 dark:border-tinta-800">
+						<h3 class:list={['text-sm font-medium tracking-wide uppercase', grupo.color]}>{grupo.grupo}</h3>
+						<ul class="mt-4 flex flex-wrap gap-2">
+							{grupo.chips.map((chip) => (
+								<li>
+									<a href={chip.href} class="inline-block rounded-full border border-tinta-200 px-3 py-1.5 text-sm text-tinta-900 hover:border-menta dark:border-tinta-800 dark:text-tinta-50">
+										{chip.texto}
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				))
+			}
+		</div>
+	</section>
+
+	<section id="sobre-mi" class={seccion}>
+		<h2 class={bloqueTitulo}>{textos.sobreMi.titulo}</h2>
+		<p class={bloqueTexto}>{textos.sobreMi.intro}</p>
+
+		<div class="mt-14 grid gap-12 lg:grid-cols-2">
+			<div>
+				<h3 class="text-3xl text-tinta-900 dark:text-tinta-50">{textos.sobreMi.experiencia}</h3>
+				<ol class="mt-6">
+					{
+						experiencia.map((item) => (
+							<li class="border-b border-tinta-200 py-6 first:pt-0 dark:border-tinta-800">
+								<p class="text-sm text-tinta-600 dark:text-tinta-300">{item.fecha}</p>
+								<h4 class="mt-1 text-xl font-medium text-tinta-900 dark:text-tinta-50">{item.rol}</h4>
+								<p class="mt-1 text-sm text-ocre dark:text-arena">{item.organizacion}</p>
+								<p class="mt-3 leading-relaxed text-tinta-600 dark:text-tinta-300">{item.descripcion}</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+
+			<div class="space-y-12">
+				<div>
+					<h3 class="text-3xl text-tinta-900 dark:text-tinta-50">{textos.sobreMi.formacion}</h3>
+					<div class="mt-6 border-b border-tinta-200 pb-6 dark:border-tinta-800">
+						<p class="text-sm text-tinta-600 dark:text-tinta-300">{formacion.fecha}</p>
+						<h4 class="mt-1 text-xl font-medium text-tinta-900 dark:text-tinta-50">{formacion.titulo}</h4>
+						<p class="mt-1 text-sm text-ocre dark:text-arena">{formacion.institucion}</p>
+						<p class="mt-3 leading-relaxed text-tinta-600 dark:text-tinta-300">{formacion.descripcion}</p>
+					</div>
+				</div>
+
+				<div>
+					<h3 class="text-3xl text-tinta-900 dark:text-tinta-50">{textos.sobreMi.reconocimientos}</h3>
+					<ul class="mt-6">
+						{
+							reconocimientos.map((item) => (
+								<li class="border-b border-tinta-200 py-4 first:pt-0 dark:border-tinta-800">
+									<p class="font-medium text-tinta-900 dark:text-tinta-50">{item.titulo}</p>
+									<p class="mt-1 text-sm text-tinta-600 dark:text-tinta-300">{item.entidad}</p>
+								</li>
+							))
+						}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="contacto" class={seccion}>
+		<h2 class={bloqueTitulo}>{textos.contacto.titulo}</h2>
+		<p class={bloqueTexto}>{textos.contacto.intro}</p>
+
+		<ul class="mt-8 max-w-3xl space-y-3 text-tinta-600 dark:text-tinta-300">
+			<li>{textos.contacto.universidades}</li>
+			<li>{textos.contacto.industria}</li>
+		</ul>
+
+		<div class="mt-12 grid gap-6 sm:grid-cols-2">
+			<div class="rounded-2xl border border-tinta-200 p-6 dark:border-tinta-800">
+				<p class="text-sm font-medium tracking-wide text-tinta-600 uppercase dark:text-tinta-300">{textos.contacto.correo}</p>
+				<a href={`mailto:${correo}`} class="mt-2 block break-all text-lg text-tinta-900 hover:text-acento-500 dark:text-tinta-50 dark:hover:text-menta">
+					{correo}
+				</a>
+			</div>
+			<div class="rounded-2xl border border-tinta-200 p-6 dark:border-tinta-800">
+				<p class="text-sm font-medium tracking-wide text-tinta-600 uppercase dark:text-tinta-300">{textos.contacto.whatsapp}</p>
+				<a href={whatsapp} rel="noopener" target="_blank" class="mt-2 block text-lg text-tinta-900 hover:text-acento-500 dark:text-tinta-50 dark:hover:text-menta">
+					+593 963 437 994
+				</a>
+			</div>
+		</div>
+
+		<div class="mt-10">
+			<p class="text-sm font-medium tracking-wide text-tinta-600 uppercase dark:text-tinta-300">{textos.contacto.redes}</p>
+			<ul class="mt-4 flex flex-wrap gap-x-8 gap-y-3 text-lg">
+				{
+					redes.map((red) => (
+						<li>
+							<a href={red.url} rel="me noopener" target="_blank" class="text-tinta-900 hover:text-acento-500 dark:text-tinta-50 dark:hover:text-menta">
+								{red.nombre}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+</Base>

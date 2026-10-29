@@ -1,29 +1,38 @@
 ---
 import '@fontsource-variable/inter';
+import '@fontsource-variable/newsreader';
 import '../styles/global.css';
 import Cabecera from '../components/Cabecera.astro';
 import PieDePagina from '../components/PieDePagina.astro';
+import { esIdioma, idiomaPorDefecto, t, type Idioma } from '../i18n/ui';
 
 interface Props {
 	titulo: string;
 	descripcion: string;
+	idioma: Idioma;
 }
 
-const { titulo, descripcion } = Astro.props;
+const { titulo, descripcion, idioma } = Astro.props;
+const textos = t(idioma);
+const otroIdioma: Idioma = idioma === 'es' ? 'en' : 'es';
+const rutaAlterna = Astro.url.pathname.replace(`/${idioma}/`, `/${otroIdioma}/`);
 const urlCanonica = new URL(Astro.url.pathname, Astro.site);
-const tituloCompleto = titulo === 'inicio'
-	? 'Julián E. Ordoñez'
-	: `${titulo} · Julián E. Ordoñez`;
+const tituloCompleto = titulo === textos.nav.inicio || titulo === 'inicio'
+	? textos.nombre
+	: `${titulo} · ${textos.nombre}`;
+const idiomaValido = esIdioma(idioma) ? idioma : idiomaPorDefecto;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={idiomaValido}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{tituloCompleto}</title>
 		<meta name="description" content={descripcion} />
 		<link rel="canonical" href={urlCanonica} />
+		<link rel="alternate" hreflang="es" href={new URL(idioma === 'es' ? Astro.url.pathname : rutaAlterna, Astro.site)} />
+		<link rel="alternate" hreflang="en" href={new URL(idioma === 'en' ? Astro.url.pathname : rutaAlterna, Astro.site)} />
 
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={tituloCompleto} />
@@ -50,22 +59,20 @@ const tituloCompleto = titulo === 'inicio'
 		</script>
 	</head>
 
-	<body
-		class="min-h-screen bg-white text-tinta-800 antialiased dark:bg-tinta-950 dark:text-tinta-200"
-	>
+	<body class="min-h-screen bg-papel text-tinta-800 antialiased dark:bg-tinta-950 dark:text-tinta-200">
 		<a
 			href="#contenido"
 			class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-acento-500 focus:px-4 focus:py-2 focus:text-white"
 		>
-			Saltar al contenido
+			{textos.saltar}
 		</a>
 
-		<Cabecera />
+		<Cabecera idioma={idiomaValido} rutaAlterna={rutaAlterna} />
 
-		<main id="contenido" class="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6">
+		<main id="contenido" class="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 lg:py-20">
 			<slot />
 		</main>
 
-		<PieDePagina />
+		<PieDePagina idioma={idiomaValido} />
 	</body>
 </html>

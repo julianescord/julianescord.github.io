@@ -1,26 +1,35 @@
 ---
+import { redes, t, type Idioma } from '../i18n/ui';
+
+interface Props {
+	idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const textos = t(idioma);
 const anio = new Date().getFullYear();
 ---
 
-<footer class="border-t border-tinta-200 dark:border-tinta-800">
-	<div
-		class="mx-auto flex max-w-3xl flex-col gap-3 px-4 py-8 text-sm text-tinta-600 sm:flex-row sm:items-center sm:px-6 dark:text-tinta-400"
-	>
-		<p>© {anio} Julián E. Ordoñez</p>
+<footer class="border-t-2 border-double border-tinta-200 dark:border-tinta-800">
+	<div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-tinta-600 sm:px-8 dark:text-tinta-300">
+		<p class="titulo-display text-lg text-tinta-900 dark:text-tinta-50">{textos.nombre}</p>
+		<p>{textos.pie.enfoque}</p>
 
-		<nav class="flex gap-4 sm:ml-auto" aria-label="Enlaces externos">
-			<a
-				href="https://github.com/julianescord"
-				class="hover:text-acento-500"
-				rel="me noopener"
-				target="_blank">GitHub</a
-			>
-			<a
-				href="https://www.linkedin.com/in/julianescord"
-				class="hover:text-acento-500"
-				rel="me noopener"
-				target="_blank">LinkedIn</a
-			>
+		<nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label={textos.contacto.redes}>
+			{
+				redes.map((red) => (
+					<a
+						href={red.url}
+						rel="me noopener"
+						target="_blank"
+						class="hover:text-acento-500 dark:hover:text-acento-400"
+					>
+						{red.nombre}
+					</a>
+				))
+			}
 		</nav>
+
+		<p class="text-xs text-tinta-600 dark:text-tinta-300">© {anio} {textos.nombre}. {textos.pie.derechos}</p>
 	</div>
 </footer>

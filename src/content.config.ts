@@ -16,9 +16,9 @@ const software = defineCollection({
 		resumen: z.string(),
 		// El repositorio es OPCIONAL: parte del trabajo es privado o esta bajo
 		// acuerdo de confidencialidad, y aun asi merece estar en la vitrina.
-		repo: z.string().url().optional(),
-		demo: z.string().url().optional(),
-		sitio: z.string().url().optional(),
+		repo: z.url().optional(),
+		demo: z.url().optional(),
+		sitio: z.url().optional(),
 		privado: z.boolean().default(false),
 		stack: z.array(z.string()).min(1),
 		estado: z.enum(['activo', 'estable', 'pausado', 'archivado']),
@@ -41,8 +41,8 @@ const esquemaInvestigacion = () =>
 		venue: z.string().optional(),
 		anio: z.number().int(),
 		doi: z.string().optional(),
-		url: z.string().url().optional(),
-		estado: z.enum(['publicado', 'en revision', 'en curso']),
+		url: z.url().optional(),
+		estado: z.enum(['publicado', 'en revision', 'en curso', 'completado']),
 		etiquetas: z.array(z.string()).default([]),
 		orden: z.number().int().default(100),
 		// Permite distinguir en la pagina lo escrito a mano de lo importado.
